@@ -35,6 +35,7 @@ public:
 	void addOrganism(Organism *organism);
 	vector<Position> getVectorOfFreePositionsAround(Position position);
 	vector<Position> getVectorOfPositionsAround(Position position);
+	vector<Organism*> filter(vector<Organism*> organisms_to_modify, Organism* organism_to_filter);
 	void makeTurn();
 	void makeMove(Result* result);
 

@@ -88,6 +88,16 @@ void World::addOrganism(Organism* organism)
 	this->organisms.push_back(organism);
 }
 
+vector<Organism*> World::filter(vector<Organism*> organisms_to_modify, Organism* organism_to_filter){
+	vector<Organism*> new_organisms;
+	for (Organism* org : organisms_to_modify){
+		if (org != organism_to_filter){
+			new_organisms.push_back(org);
+		}
+	}
+	return new_organisms;
+}
+
 void World::makeTurn()
 {
 	vector<Result*> results;
@@ -156,8 +166,14 @@ void World::makeMove(Result* result){
 	} else if (action == 2){
 		result->getOrganism()->setPosition(result->getPosition());
 	} else if (action == 3){
-		delete result->getOrganism();
+		Organism* organism = result->getOrganism();
+		vector<Organism*> filtered = filter(newOrganisms, organism);
+		this->newOrganisms = filtered;
+		filtered = filter(organisms, organism);
+		this->organisms = filtered;
+		delete organism;
 	}
+	delete result;
 }
 
 void World::writeWorld(string fileName)
