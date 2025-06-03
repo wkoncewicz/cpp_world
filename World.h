@@ -3,6 +3,11 @@
 #include <vector>
 #include <ctime>
 #include "Organism.h"
+#include "Dandelion.h"
+#include "Grass.h"
+#include "Sheep.h"
+#include "Toadstool.h"
+#include "Wolf.h"
 #include "Result.h"
 
 using namespace std;
@@ -24,6 +29,7 @@ public:
 	Organism* getOrganismFromPosition(int x, int y);
 	World(int worldX, int worldY);
 	World() : World(6, 6) {};
+	~World();
 
 	int getWorldX();
 	void setWorldX(int worldX);
@@ -32,7 +38,7 @@ public:
 
 	int getTurn();
 	
-	void addOrganism(Organism *organism);
+	void addOrganism(Organism* organism);
 	vector<Position> getVectorOfFreePositionsAround(Position position);
 	vector<Position> getVectorOfPositionsAround(Position position);
 	vector<Organism*> filter(vector<Organism*> organisms_to_modify, Organism* organism_to_filter);

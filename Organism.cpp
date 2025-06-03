@@ -1,4 +1,6 @@
 #include "Organism.h"
+#include "World.h"
+#include <iostream>
 
 Organism::Organism(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref_param) :
     world(world_ref_param),

@@ -1,6 +1,12 @@
 #include "Dandelion.h"
 
-Dandelion::Dandelion(Position position, World& world_ref) : Plant(0, 0, 6, 2, position, world)
+Dandelion::Dandelion(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref)
+    : Plant(power, initiative, liveLength, powerToReproduce, position, world_ref)
+{
+    setSpecies("D");
+}
+
+Dandelion::Dandelion(Position position, World& world_ref) : Plant(0, 0, 6, 2, position, world_ref)
 {
 	setSpecies("D");
 }

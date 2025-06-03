@@ -1,8 +1,9 @@
 #pragma once
 #include "Position.h"
-#include "Organism.h"
 
 using namespace std;
+
+class Organism;
 
 class Result {
 private:

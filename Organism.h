@@ -3,9 +3,10 @@
 #include <vector>
 #include "Position.h"
 #include "Result.h"
-#include "World.h"
 
 using namespace std;
+
+class World;
 
 class Organism
 {

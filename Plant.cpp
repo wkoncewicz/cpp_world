@@ -1,4 +1,6 @@
 #include "Plant.h"
+#include "World.h"
+#include <iostream>
 #include <cstdlib>
 
 Plant::Plant(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref) 
@@ -7,7 +9,8 @@ Plant::Plant(int power, int initiative, int liveLength, int powerToReproduce, Po
 	setSpecies("P");
 }
 
-Plant::Plant(World& world_ref) : Organism(world_ref)
+Plant::Plant(World& world_ref) 
+	: Organism(world_ref)
 {
 	setSpecies("P");
 }
@@ -20,18 +23,14 @@ vector<Result*> Plant::move()
 
 vector<Result*> Plant::action(){
 	vector<Result*> results;
-	Position newPosition;
+	vector<Position> birthPositions = getVectorOfFreePositionsAround();
 
-	if (this->ifReproduce()){
-		vector<Position> pomPositions = getVectorOfFreePositionsAround();
-
-		if (!pomPositions.empty()){
-			int randomIndex = std::rand() % pomPositions.size();
-			Position newPosition = pomPositions[randomIndex];
-			Organism* newPlant = this->clone(newPosition, this->world);
-			this->power = this->power / 2;
-			results.push_back(new Result(0, newPosition, 0, newPlant));
-		}
-		return results;
+	if (this->ifReproduce() && !birthPositions.empty()){
+		int randomIndex = std::rand() % birthPositions.size();
+		Position newPlantPosition = birthPositions[randomIndex];
+		Organism* newPlant = this->clone(newPlantPosition, this->world);
+		this->power = this->power/2;
+		results.push_back(new Result(0, newPlantPosition, 0, newPlant));
 	}
+	return results;
 }

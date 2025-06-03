@@ -3,6 +3,17 @@
 #include <algorithm>
 #include <iostream>
 
+World::~World() {
+    for (Organism* org : organisms) {
+        delete org;
+    }
+    organisms.clear();
+    for (Organism* org : newOrganisms) {
+        delete org;
+    }
+    newOrganisms.clear();
+}
+
 Organism* World::getOrganismFromPosition(int x, int y)
 {	
 	for (Organism* org : organisms)
@@ -103,6 +114,14 @@ void World::makeTurn()
 	vector<Result*> results;
 	vector<Result*> new_results;
 	vector<Organism*> new_organisms;
+
+	std::sort(organisms.begin(), organisms.end(), [](const Organism* a, const Organism* b) {
+        if (!a && !b) return false;
+        if (!a) return false;
+        if (!b) return true;
+        
+        return a->initiative > b->initiative;
+    });
 	
 	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
@@ -129,7 +148,7 @@ void World::makeTurn()
 		org->setLiveLength(org->getLiveLength() - 1);
 		org->setPower(org->getPower() + 1);
 		if (org->getLiveLength() < 1){
-			cout << org->getSpecies() << "died of age at" << org->getPosition().toString();
+			cout << org->getSpecies() << " died of age at " << org->getPosition().toString() << endl;
 		}
 	}
 	
@@ -149,9 +168,13 @@ void World::makeTurn()
 	}
 
 	organisms.insert(organisms.end(), newOrganisms.begin(), newOrganisms.end());
-	std::sort(organisms.begin(), organisms.end(), [](const Organism& a, const Organism& b) {
-    	return a.initiative > b.initiative;
-	});
+	std::sort(organisms.begin(), organisms.end(), [](const Organism* a, const Organism* b) {
+        if (!a && !b) return false;
+        if (!a) return false;
+        if (!b) return true;
+        
+        return a->initiative > b->initiative;
+    });
 	newOrganisms.clear();
 
 	turn++;
@@ -190,6 +213,12 @@ void World::writeWorld(string fileName)
 			int data;
 			data = this->organisms[i]->getPower();
 			my_file.write((char*)&data, sizeof(int));
+			data = this->organisms[i]->getInitiative();
+			my_file.write((char*)&data, sizeof(int));
+			data = this->organisms[i]->getLiveLength();
+			my_file.write((char*)&data, sizeof(int));
+			data = this->organisms[i]->getPowerToReproduce();
+			my_file.write((char*)&data, sizeof(int));
 			data = this->organisms[i]->getPosition().getX();
 			my_file.write((char*)&data, sizeof(int));
 			data = this->organisms[i]->getPosition().getY();
@@ -217,11 +246,20 @@ void World::readWorld(string fileName)
 		this->turn = (int)result;
 		my_file.read((char*)&result, sizeof(int));
 		int orgs_size = (int)result;
-		vector<Organism> new_organisms;
+		vector<Organism*> new_organisms;
 		for (int i = 0; i < orgs_size; i++) {
 			int power;
 			my_file.read((char*)&result, sizeof(int));
 			power = (int)result;
+			int initiative;
+			my_file.read((char*)&result, sizeof(int));
+			initiative = (int)result;
+			int liveLength;
+			my_file.read((char*)&result, sizeof(int));
+			liveLength = (int)result;
+			int powerToReproduce;
+			my_file.read((char*)&result, sizeof(int));
+			powerToReproduce = (int)result;
 
 			int pos_x;
 			my_file.read((char*)&result, sizeof(int));
@@ -239,9 +277,25 @@ void World::readWorld(string fileName)
 			species.resize(s_size);
 			my_file.read((char*)&species[0], s_size);
 			
-			Organism org(power, pos);
-			org.setSpecies(species);
-			new_organisms.push_back(org);
+			Organism* org = nullptr;
+
+			if (species == "D"){
+				Organism* org = new Dandelion(power, initiative, liveLength, powerToReproduce, pos, *this);
+			} else if (species == "G"){
+				Organism* org = new Grass(power, initiative, liveLength, powerToReproduce, pos, *this);
+			} else if (species == "S"){
+				Organism* org = new Sheep(power, initiative, liveLength, powerToReproduce, pos, *this);
+			} else if (species == "T"){
+				Organism* org = new Toadstool(power, initiative, liveLength, powerToReproduce, pos, *this);
+			} else if (species == "W"){
+				Organism* org = new Wolf(power, initiative, liveLength, powerToReproduce, pos, *this);
+			}
+			if (org != nullptr){
+				org->setSpecies(species); 
+                new_organisms.push_back(org);
+			} else {
+                cerr << "Error: Unknown species type '" << species << "' found in save file." << endl;
+            }
 		}
 		this->organisms = new_organisms;
 		my_file.close();
@@ -256,11 +310,12 @@ string World::toString()
 	for (int wY = 0; wY < getWorldY(); ++wY) {
 		for (int wX = 0; wX < getWorldX(); ++wX) {
 			Organism* org = getOrganismFromPosition(wX, wY);
-			spec = org->getSpecies();
-			if (spec != "")
+			if (org) {
+				spec = org->getSpecies();
 				result += spec;
-			else
+			} else {
 				result += separator;
+}
 		};
 		result += "\n";
 	}

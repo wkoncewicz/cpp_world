@@ -10,9 +10,9 @@ using namespace std;
 int main()
 {
 	// Position 
-	Position p1;
-	Position p2{ 1, 1 };
-	Position p3{ -3, -5 };
+	// Position p1;
+	// Position p2{ 1, 1 };
+	// Position p3{ -3, -5 };
 
 	//cout << p1.toString() << endl;
 	//cout << p2.toString() << endl;
@@ -31,36 +31,39 @@ int main()
 	//cout << org1.toString() << endl;
 
 	// Plant & Animal
-	Plant plant{ 3, p3 };
-	Animal animal{ 5, p2 };
-	Plant plant2;
-	Animal animal2;
+	// Plant plant{ 3, p3 };
+	// Animal animal{ 5, p2 };
+	// Plant plant2;
+	// Animal animal2;
 
-	cout << plant.toString() << endl;
-	cout << animal.toString() << endl;
-	cout << plant2.toString() << endl;
-	cout << animal2.toString() << endl;
-	plant.move(3, 4);
-	cout << plant.toString() << endl;
-	animal.move(1, 2);
-	cout << animal.toString() << endl;
+	// cout << plant.toString() << endl;
+	// cout << animal.toString() << endl;
+	// cout << plant2.toString() << endl;
+	// cout << animal2.toString() << endl;
+	// plant.move(3, 4);
+	// cout << plant.toString() << endl;
+	// animal.move(1, 2);
+	// cout << animal.toString() << endl;
 	
 	// World test
 	World world;
 	Position posP1{ 4, 5 };
-	Plant plantW1{ 3, posP1 };
+	Organism* dandelion = new Dandelion(posP1, world);
 	Position posP2{ 5, 4 };
-	Plant plantW2{ 3, posP2 };
+	Organism* grass = new Grass(posP2, world);
+	Position posP3{ 4, 4 };
+	Organism* toadstool = new Toadstool(posP3, world);
 
 	Position posW2{ 3, 2 };
-	Animal animalW1{ 6, posW2 };
+	Organism* sheep = new Sheep(posW2, world);
 	Position posW3{ 2, 3 };
-	Animal animalW2{ 6, posW3 };
+	Organism* wolf = new Wolf(posW3, world);
 
-	world.addOrganism(&plantW1);
-	world.addOrganism(&plantW2);
-	world.addOrganism(&animalW1);
-	world.addOrganism(&animalW2);
+	world.addOrganism(dandelion);
+	world.addOrganism(grass);
+	world.addOrganism(toadstool);
+	world.addOrganism(sheep);
+	world.addOrganism(wolf);
 
 	auto positions = world.getVectorOfFreePositionsAround(Position(5, 5));
 
@@ -71,22 +74,14 @@ int main()
 	cout << world.toString() << endl;
 
 	// Tura 1
-	world.makeTurn();
-	cout << world.toString() << endl;
-
-	// Tura 2
-	world.makeTurn();
-	cout << world.toString() << endl;
-
-	world.writeWorld("world.bin");
-
-	// Tura 3
-	world.makeTurn();
-	cout << world.toString() << endl;
+	for (int i=0; i<25; i++){
+		world.makeTurn();
+		cout << world.toString() << endl;
+	}
 
 	// powrot do Tury 2
 	world.readWorld("world.bin");
 	cout << world.toString() << endl;
-
+	
 	return 0;
 }

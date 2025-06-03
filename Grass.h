@@ -4,6 +4,7 @@
 class Grass : public Plant
 {
 	public:
+		Grass(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref);
 		Grass(Position position, World& world_ref);
 		Grass(World& world_ref);
 

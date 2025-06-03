@@ -1,5 +1,7 @@
 #include "Animal.h"
+#include "World.h"
 #include <cstdlib>
+#include <iostream>
 
 Animal::Animal(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref)
     : Organism(power, initiative, liveLength, powerToReproduce, position, world_ref)

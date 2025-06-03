@@ -4,6 +4,7 @@
 class Toadstool : public Plant
 {
 	public:
+	Toadstool(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref);
 		Toadstool(Position position, World& world_ref);
 		Toadstool(World& world_ref);
 

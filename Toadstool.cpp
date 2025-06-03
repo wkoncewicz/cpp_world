@@ -1,5 +1,11 @@
 #include "Toadstool.h"
 
+Toadstool::Toadstool(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref)
+    : Plant(power, initiative, liveLength, powerToReproduce, position, world_ref)
+{
+    setSpecies("T");
+}
+
 Toadstool::Toadstool(Position position, World& world_ref) : Plant(0, 0, 12, 4, position, world_ref)
 {
 	setSpecies("T");
