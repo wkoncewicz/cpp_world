@@ -1,6 +1,6 @@
 #include "Sheep.h"
 
-Sheep::Sheep(Position position) : Animal(3, 3, 10, 6, position)
+Sheep::Sheep(Position position, World world) : Animal(3, 3, 10, 6, position, world)
 {
 	setSpecies("S");
 }
@@ -8,4 +8,11 @@ Sheep::Sheep(Position position) : Animal(3, 3, 10, 6, position)
 Sheep::Sheep() : Animal()
 {
 	setSpecies("S");
+}
+
+void Sheep::initParams(){
+	this->setPower(3);
+	this->setInitiative(3);
+	this->setLiveLength(10);
+	this->setPowerToReproduce(6);
 }

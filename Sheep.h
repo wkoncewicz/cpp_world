@@ -6,7 +6,9 @@ using namespace std;
 class Sheep : public Animal
 {
 	public:
-		Sheep(Position position);
+		Sheep(Position position, World world);
 		Sheep();
+
+		void initParams();
 
 };

@@ -4,7 +4,9 @@
 class Toadstool : public Plant
 {
 	public:
-		Toadstool(int power, int initiative, int liveLength, int powerToReproduce, Position position);
+		Toadstool(Position position, World world);
 		Toadstool();
 
+		void initParams();
+		Result* consequences(Organism* attackingOrganism);
 };

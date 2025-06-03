@@ -35,6 +35,7 @@ public:
 	void setWorld(World world);
 	string getSpecies();
 	void setSpecies(string spec);
+	void initParams();
 
 	string toString();
 

@@ -46,6 +46,7 @@ vector<Result*> Animal::action(){
 		int randomIndex = std::rand() % birthPositions.size();
 		Position newAnimalPosition = birthPositions[randomIndex];
 		Animal* newAnimal = this;
+		newAnimal->initParams();
 		newAnimal->setPosition(newAnimalPosition);
 		this->power = this->power/2;
 		results.push_back(new Result(0, newAnimalPosition, 0, newAnimal));

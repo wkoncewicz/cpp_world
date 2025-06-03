@@ -29,6 +29,7 @@ vector<Result> Plant::action(){
 			int randomIndex = std::rand() % pomPositions.size();
 			Position newPosition = pomPositions[randomIndex];
 			Plant* newPlant = this;
+			newPlant->initParams();
 			newPlant->setPosition(newPosition);
 			this->power = this->power / 2;
 			results.push_back(Result(0, newPosition, 0, newPlant));

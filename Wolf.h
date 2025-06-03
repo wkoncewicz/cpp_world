@@ -6,7 +6,8 @@ using namespace std;
 class Wolf : public Animal
 {
 	public:
-		Wolf(Position position);
+		Wolf(Position position, World world);
 		Wolf();
 
+		void initParams();
 };
