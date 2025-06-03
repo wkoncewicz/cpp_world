@@ -4,9 +4,9 @@
 class Plant : public Organism
 {
 	public:
-		Plant(int power, int initiative, int liveLength, int powerToReproduce, Position position, World world);
-		Plant();
+		Plant(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world);
+		Plant(World& world_ref);
 
-		vector<Result> move();
-		vector<Result> action();
+		vector<Result*> move();
+		vector<Result*> action();
 };

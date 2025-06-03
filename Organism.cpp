@@ -1,15 +1,13 @@
 #include "Organism.h"
 
-Organism::Organism(int power, int initiative, int liveLength, int powerToReproduce, Position position, World world)
-{
-	setPower(power);
-	setInitiative(initiative);
-	setLiveLength(liveLength);
-	setPowerToReproduce(powerToReproduce);
-	setPosition(position);
-	setWorld(world);
-	setSpecies("O");
-}
+Organism::Organism(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref_param) :
+    world(world_ref_param),
+    power(power),
+    initiative(initiative),
+    liveLength(liveLength),
+    powerToReproduce(powerToReproduce),
+    position(position),
+    species("O") {}
 
 int Organism::getPower()
 {
@@ -53,10 +51,6 @@ Position Organism::getPosition()
 void Organism::setPosition(Position position)
 {
 	this->position = position;
-}
-
-void Organism::setWorld(World world){
-	this->world = world;
 }
 
 string Organism::toString()

@@ -101,21 +101,21 @@ vector<Organism*> World::filter(vector<Organism*> organisms_to_modify, Organism*
 void World::makeTurn()
 {
 	vector<Result*> results;
+	vector<Result*> new_results;
 	vector<Organism*> new_organisms;
 	
 	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
-			results = org->move();
-			for (Result* r : results){
-				makeMove(r);
-			}
+			new_results = org->move();
+			results.insert(results.end(), new_results.begin(), new_results.end());
 			if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
-				results = org->action();
-				for (Result* r : results){
-					makeMove(r);
-				}
+				new_results = org->action();
+				results.insert(results.end(), new_results.begin(), new_results.end());
 			}
 		}
+	}
+	for (Result* r : results){
+		makeMove(r);
 	}
 
 	for (auto& org : organisms){

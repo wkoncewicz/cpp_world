@@ -1,18 +1,15 @@
 #include "Grass.h"
 
-Grass::Grass(Position position, World world) : Plant(0, 0, 6, 3, position, world)
+Grass::Grass(Position position, World& world_ref) : Plant(0, 0, 6, 3, position, world_ref)
 {
 	setSpecies("G");
 }
 
-Grass::Grass() : Plant()
+Grass::Grass(World& world_ref) : Plant(world_ref)
 {
 	setSpecies("G");
 }
 
-void Grass::initParams(){
-	this->setPower(0);
-	this->setInitiative(0);
-	this->setLiveLength(6);
-	this->setPowerToReproduce(3);
+Organism* Grass::clone(Position position, World& world_ref){
+	return new Grass(position, world_ref);
 }

@@ -1,18 +1,15 @@
 #include "Wolf.h"
 
-Wolf::Wolf(Position position, World world) : Animal(8, 5, 20, 16, position, world)
+Wolf::Wolf(Position position, World& world_ref) : Animal(8, 5, 20, 16, position, world_ref)
 {
 	setSpecies("W");
 }
 
-Wolf::Wolf() : Animal()
+Wolf::Wolf(World& world_ref) : Animal(world_ref)
 {
 	setSpecies("W");
 }
 
-void Wolf::initParams(){
-	this->setPower(8);
-	this->setInitiative(5);
-	this->setLiveLength(20);
-	this->setPowerToReproduce(16);
+Organism* Wolf::clone(Position position, World& world_ref){
+	return new Wolf(position, world_ref);
 }

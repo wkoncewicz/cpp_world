@@ -4,9 +4,9 @@
 class Toadstool : public Plant
 {
 	public:
-		Toadstool(Position position, World world);
-		Toadstool();
+		Toadstool(Position position, World& world_ref);
+		Toadstool(World& world_ref);
 
-		void initParams();
+		Organism* clone(Position position, World& world_ref);
 		Result* consequences(Organism* attackingOrganism);
 };

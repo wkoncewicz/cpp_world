@@ -4,8 +4,8 @@
 class Dandelion : public Plant
 {
 	public:
-		Dandelion(Position position, World world);
-		Dandelion();
+		Dandelion(Position position, World& world_ref);
+		Dandelion(World& world_ref);
 
-		void initParams();
+		Organism* clone(Position position, World& world_ref);
 };

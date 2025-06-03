@@ -1,20 +1,17 @@
 #include "Toadstool.h"
 
-Toadstool::Toadstool(Position position, World world) : Plant(0, 0, 12, 4, position, world)
+Toadstool::Toadstool(Position position, World& world_ref) : Plant(0, 0, 12, 4, position, world_ref)
 {
 	setSpecies("T");
 }
 
-Toadstool::Toadstool() : Plant()
+Toadstool::Toadstool(World& world_ref) : Plant(world_ref)
 {
 	setSpecies("T");
 }
 
-void Toadstool::initParams(){
-	this->setPower(0);
-	this->setInitiative(0);
-	this->setLiveLength(12);
-	this->setPowerToReproduce(4);
+Organism* Toadstool::clone(Position position, World& world_ref){
+	return new Toadstool(position, world_ref);
 }
 
 Result* Toadstool::consequences(Organism* attackingOrganism){

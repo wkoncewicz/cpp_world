@@ -6,9 +6,8 @@ using namespace std;
 class Sheep : public Animal
 {
 	public:
-		Sheep(Position position, World world);
-		Sheep();
+		Sheep(Position position, World& world_ref);
+		Sheep(World& world_ref);
 
-		void initParams();
-
+		Organism* clone(Position position, World& world_ref);
 };

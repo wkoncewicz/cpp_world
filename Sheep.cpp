@@ -1,18 +1,15 @@
 #include "Sheep.h"
 
-Sheep::Sheep(Position position, World world) : Animal(3, 3, 10, 6, position, world)
+Sheep::Sheep(Position position, World& world_ref) : Animal(3, 3, 10, 6, position, world_ref)
 {
 	setSpecies("S");
 }
 
-Sheep::Sheep() : Animal()
+Sheep::Sheep(World& world_ref) : Animal(world_ref)
 {
 	setSpecies("S");
 }
 
-void Sheep::initParams(){
-	this->setPower(3);
-	this->setInitiative(3);
-	this->setLiveLength(10);
-	this->setPowerToReproduce(6);
+Organism* Sheep::clone(Position position, World& world_ref){
+	return new Sheep(position, world_ref);
 }

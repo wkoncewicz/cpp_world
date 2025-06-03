@@ -1,18 +1,15 @@
 #include "Dandelion.h"
 
-Dandelion::Dandelion(Position position, World world) : Plant(0, 0, 6, 2, position, world)
+Dandelion::Dandelion(Position position, World& world_ref) : Plant(0, 0, 6, 2, position, world)
 {
 	setSpecies("D");
 }
 
-Dandelion::Dandelion() : Plant()
+Dandelion::Dandelion(World& world_ref) : Plant(world_ref)
 {
 	setSpecies("D");
 }
 
-void Dandelion::initParams(){
-	this->setPower(0);
-	this->setInitiative(0);
-	this->setLiveLength(6);
-	this->setPowerToReproduce(2);
+Organism* Dandelion::clone(Position position, World& world_ref){
+	return new Dandelion(position, world_ref);
 }

@@ -6,8 +6,8 @@ using namespace std;
 class Animal : public Organism
 {
 	public:
-		Animal(int power, int initiative, int liveLength, int powerToReproduce, Position position, World world);
-		Animal();
+		Animal(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world);
+		Animal(World& world_ref);
 
 		Position lastPosition;
 

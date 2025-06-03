@@ -4,8 +4,8 @@
 class Grass : public Plant
 {
 	public:
-		Grass(Position position, World world);
-		Grass();
+		Grass(Position position, World& world_ref);
+		Grass(World& world_ref);
 
-		void initParams();
+		Organism* clone(Position position, World& world_ref);
 };

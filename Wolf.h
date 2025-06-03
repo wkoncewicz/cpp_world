@@ -6,8 +6,8 @@ using namespace std;
 class Wolf : public Animal
 {
 	public:
-		Wolf(Position position, World world);
-		Wolf();
+		Wolf(Position position, World& world_ref);
+		Wolf(World& world_ref);
 
-		void initParams();
+		Organism* clone(Position position, World& world_ref);
 };
