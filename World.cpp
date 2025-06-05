@@ -119,7 +119,13 @@ void World::makeTurn()
         return a->initiative > b->initiative;
     });
 	
-	for (auto& org : organisms){
+	int counter = 0;
+	for (Organism* org : organisms){
+		if (org == nullptr){
+			cout << "alert" << endl;
+		} else {
+			cout << counter++ << "-" <<org << endl;
+		}
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 			results = org->move();
 			for (Result* r : results){
@@ -127,6 +133,7 @@ void World::makeTurn()
 			}
 			if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 				results = org->action();
+				// cout <<"asdad" << endl; //Wypisuje sie
 				for (Result* r : results){
 					makeMove(r);
 				}
@@ -135,18 +142,9 @@ void World::makeTurn()
 	}
 
 	for (auto& org : organisms){
-		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
-			new_organisms.push_back(org);
-		} else {
-			delete org;
-		}
-	}
-	this->organisms = new_organisms;
-
-	for (auto& org : organisms){
 		org->setLiveLength(org->getLiveLength() - 1);
 		org->setPower(org->getPower() + 1);
-		if (org->getLiveLength() < 1){
+		if (org->getLiveLength() < 1 && isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 			cout << org->getSpecies() << " died of age at " << org->getPosition().toString() << endl;
 			makeMove(new Result(3, Position(-1, -1), 0, org));
 		}
@@ -156,6 +154,8 @@ void World::makeTurn()
 	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 			new_organisms.push_back(org);
+		} else {
+			delete org;
 		}
 	}
 
@@ -175,6 +175,7 @@ void World::makeTurn()
 void World::makeMove(Result* result){
 	int action = result->getAction();
 	if (action == 0){
+		cout << "Adres przy action" << result->getOrganism() << endl;
 		this->organisms.push_back((result->getOrganism()));
 	} else if (action == 1){
 		result->getOrganism()->setPower(result->getValue());

@@ -19,7 +19,6 @@ private:
 	int worldY;
 	int turn = 0;
 	vector<Organism*> organisms;
-	vector<Organism*> newOrganisms;
 	char separator = '.';
 
 	bool isPositionOnWorld(int x, int y);

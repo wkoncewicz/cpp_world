@@ -1,4 +1,5 @@
 #include "Toadstool.h"
+#include <iostream>
 
 Toadstool::Toadstool(int power, int initiative, int liveLength, int powerToReproduce, Position position, World& world_ref)
     : Plant(power, initiative, liveLength, powerToReproduce, position, world_ref)

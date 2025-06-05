@@ -112,11 +112,13 @@ vector<Result*> Organism::action(){
 	vector<Result*> results;
 	vector<Position> birthPositions = getVectorOfFreePositionsAround();
 
+	cout << this->species << endl;
 	if (this->ifReproduce() && !birthPositions.empty()){
 		int randomIndex = std::rand() % birthPositions.size();
 		Position newOrganismPosition = birthPositions[randomIndex];
 		Organism* newOrganism = this->clone(newOrganismPosition, this->world);
 		newOrganism->getLifeRecord()->setBirthTurn(this->world.getTurn());
+		cout << newOrganism << endl;
 		vector<LifeRecord*> newAncestry = this->ancestry;
 		newAncestry.push_back(this->lifeRecord);
 		newOrganism->setAncestry(newAncestry);
