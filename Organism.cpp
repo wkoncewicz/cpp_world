@@ -9,7 +9,9 @@ Organism::Organism(int power, int initiative, int liveLength, int powerToReprodu
     liveLength(liveLength),
     powerToReproduce(powerToReproduce),
     position(position),
-    species("O") {}
+    species("O"),
+	lifeRecord(new LifeRecord(1, -1)),
+	ancestry({}) {}
 
 int Organism::getPower()
 {
@@ -72,14 +74,30 @@ void Organism::setSpecies(string spec)
 	this->species = spec;
 }
 
-Result* Organism::consequences(Organism* attackingOrganism){
-	Result* result;
+LifeRecord* Organism::getLifeRecord(){
+	return this->lifeRecord;
+}
+
+void Organism::setLifeRecord(LifeRecord* LifeRecord){
+	this->lifeRecord = lifeRecord;
+}
+
+vector<LifeRecord*> Organism::getAncestry(){
+	return this->ancestry;
+}
+
+void Organism::setAncestry(vector<LifeRecord*> ancestry){
+	this->ancestry = ancestry;
+}
+
+vector<Result*> Organism::consequences(Organism* attackingOrganism){
+	vector<Result*> results;
 	if (this->power > attackingOrganism->getPower()){
-		result = new Result(3, Position(-1, -1), 0, attackingOrganism);
+		results.push_back(new Result(3, Position(-1, -1), 0, attackingOrganism));
 	} else {
-		result = new Result(3, Position(-1, -1), 0, this);
+		results.push_back(new Result(3, Position(-1, -1), 0, this));
 	}
-	return result;
+	return results;
 }
 
 bool Organism::ifReproduce(){
@@ -88,6 +106,28 @@ bool Organism::ifReproduce(){
 		result = true;
 	}
 	return result;
+}
+
+vector<Result*> Organism::action(){
+	vector<Result*> results;
+	vector<Position> birthPositions = getVectorOfFreePositionsAround();
+
+	if (this->ifReproduce() && !birthPositions.empty()){
+		int randomIndex = std::rand() % birthPositions.size();
+		Position newOrganismPosition = birthPositions[randomIndex];
+		Organism* newOrganism = this->clone(newOrganismPosition, this->world);
+		newOrganism->getLifeRecord()->setBirthTurn(this->world.getTurn());
+		vector<LifeRecord*> newAncestry = this->ancestry;
+		newAncestry.push_back(this->lifeRecord);
+		newOrganism->setAncestry(newAncestry);
+		// cout << "My ancestors:" << endl;
+		// for (LifeRecord* ancestor : newOrganism->getAncestry()){
+		// 	cout << "Birth:" << endl << ancestor->getBirthTurn() << endl << "Death:" << endl << ancestor->getDeathTurn() << endl;
+		// }
+		this->power = this->power/2;
+		results.push_back(new Result(0, newOrganismPosition, 0, newOrganism));
+	}
+	return results;
 }
 
 vector<Position> Organism::getVectorOfFreePositionsAround(){

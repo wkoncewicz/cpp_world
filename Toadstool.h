@@ -9,5 +9,5 @@ class Toadstool : public Plant
 		Toadstool(World& world_ref);
 
 		Organism* clone(Position position, World& world_ref);
-		Result* consequences(Organism* attackingOrganism);
+		vector<Result*> consequences(Organism* attackingOrganism);
 };

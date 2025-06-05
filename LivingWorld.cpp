@@ -74,7 +74,7 @@ int main()
 	cout << world.toString() << endl;
 
 	// Tura 1
-	for (int i=0; i<25; i++){
+	for (int i=0; i<100; i++){
 		world.makeTurn();
 		cout << world.toString() << endl;
 	}

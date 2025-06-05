@@ -5,13 +5,10 @@
 
 World::~World() {
     for (Organism* org : organisms) {
+		delete org->getLifeRecord();
         delete org;
     }
     organisms.clear();
-    for (Organism* org : newOrganisms) {
-        delete org;
-    }
-    newOrganisms.clear();
 }
 
 Organism* World::getOrganismFromPosition(int x, int y)
@@ -112,7 +109,6 @@ vector<Organism*> World::filter(vector<Organism*> organisms_to_modify, Organism*
 void World::makeTurn()
 {
 	vector<Result*> results;
-	vector<Result*> new_results;
 	vector<Organism*> new_organisms;
 
 	std::sort(organisms.begin(), organisms.end(), [](const Organism* a, const Organism* b) {
@@ -125,21 +121,24 @@ void World::makeTurn()
 	
 	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
-			new_results = org->move();
-			results.insert(results.end(), new_results.begin(), new_results.end());
+			results = org->move();
+			for (Result* r : results){
+				makeMove(r);
+			}
 			if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
-				new_results = org->action();
-				results.insert(results.end(), new_results.begin(), new_results.end());
+				results = org->action();
+				for (Result* r : results){
+					makeMove(r);
+				}
 			}
 		}
-	}
-	for (Result* r : results){
-		makeMove(r);
 	}
 
 	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 			new_organisms.push_back(org);
+		} else {
+			delete org;
 		}
 	}
 	this->organisms = new_organisms;
@@ -149,25 +148,18 @@ void World::makeTurn()
 		org->setPower(org->getPower() + 1);
 		if (org->getLiveLength() < 1){
 			cout << org->getSpecies() << " died of age at " << org->getPosition().toString() << endl;
+			makeMove(new Result(3, Position(-1, -1), 0, org));
 		}
 	}
-	
-	new_organisms.clear();
-	for (auto& org : organisms){
-		if (org->getLiveLength() > 0){
-			new_organisms.push_back(org);
-		}
-	}
-	this->organisms = new_organisms;
 
 	new_organisms.clear();
-	for (auto& org : newOrganisms){
+	for (auto& org : organisms){
 		if (isPositionOnWorld(org->getPosition().getX(), org->getPosition().getY())){
 			new_organisms.push_back(org);
 		}
 	}
 
-	organisms.insert(organisms.end(), newOrganisms.begin(), newOrganisms.end());
+	this->organisms = new_organisms;
 	std::sort(organisms.begin(), organisms.end(), [](const Organism* a, const Organism* b) {
         if (!a && !b) return false;
         if (!a) return false;
@@ -175,26 +167,23 @@ void World::makeTurn()
         
         return a->initiative > b->initiative;
     });
-	newOrganisms.clear();
+	new_organisms.clear();
 
-	turn++;
+	this->turn++;
 }
 
 void World::makeMove(Result* result){
 	int action = result->getAction();
 	if (action == 0){
-		this->newOrganisms.push_back((result->getOrganism()));
+		this->organisms.push_back((result->getOrganism()));
 	} else if (action == 1){
 		result->getOrganism()->setPower(result->getValue());
 	} else if (action == 2){
 		result->getOrganism()->setPosition(result->getPosition());
 	} else if (action == 3){
 		Organism* organism = result->getOrganism();
-		vector<Organism*> filtered = filter(newOrganisms, organism);
-		this->newOrganisms = filtered;
-		filtered = filter(organisms, organism);
-		this->organisms = filtered;
-		delete organism;
+		organism->getLifeRecord()->setDeathTurn(this->turn);
+		organism->setPosition(result->getPosition());
 	}
 	delete result;
 }
@@ -234,72 +223,81 @@ void World::writeWorld(string fileName)
 
 void World::readWorld(string fileName)
 {
-	fstream my_file;
-	my_file.open(fileName, ios::in | ios::binary);
-	if (my_file.is_open()) {
-		int result;
-		my_file.read((char*)&result, sizeof(int));
-		this->worldX = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		this->worldY = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		this->turn = (int)result;
-		my_file.read((char*)&result, sizeof(int));
-		int orgs_size = (int)result;
-		vector<Organism*> new_organisms;
-		for (int i = 0; i < orgs_size; i++) {
-			int power;
-			my_file.read((char*)&result, sizeof(int));
-			power = (int)result;
-			int initiative;
-			my_file.read((char*)&result, sizeof(int));
-			initiative = (int)result;
-			int liveLength;
-			my_file.read((char*)&result, sizeof(int));
-			liveLength = (int)result;
-			int powerToReproduce;
-			my_file.read((char*)&result, sizeof(int));
-			powerToReproduce = (int)result;
+    fstream my_file;
+    my_file.open(fileName, ios::in | ios::binary);
+    if (my_file.is_open()) {
+        int result;
+        my_file.read((char*)&result, sizeof(int));
+        this->worldX = (int)result;
+        my_file.read((char*)&result, sizeof(int));
+        this->worldY = (int)result;
+        my_file.read((char*)&result, sizeof(int));
+        this->turn = (int)result;
+        my_file.read((char*)&result, sizeof(int));
+        int orgs_size = (int)result;
+        vector<Organism*> new_organisms;
+        for (int i = 0; i < orgs_size; i++) {
+            int power;
+            my_file.read((char*)&result, sizeof(int));
+            power = (int)result;
+            int initiative;
+            my_file.read((char*)&result, sizeof(int));
+            initiative = (int)result;
+            int liveLength;
+            my_file.read((char*)&result, sizeof(int));
+            liveLength = (int)result;
+            int powerToReproduce;
+            my_file.read((char*)&result, sizeof(int));
+            powerToReproduce = (int)result;
 
-			int pos_x;
-			my_file.read((char*)&result, sizeof(int));
-			pos_x = (int)result;
-			int pos_y;
-			my_file.read((char*)&result, sizeof(int));
-			pos_y = (int)result;
-			Position pos{ pos_x, pos_y };
-			
-			int s_size;
-			my_file.read((char*)&result, sizeof(int));
-			s_size = (int)result;
+            int pos_x;
+            my_file.read((char*)&result, sizeof(int));
+            pos_x = (int)result;
+            int pos_y;
+            my_file.read((char*)&result, sizeof(int));
+            pos_y = (int)result;
+            Position pos{ pos_x, pos_y };
 
-			string species;
-			species.resize(s_size);
-			my_file.read((char*)&species[0], s_size);
-			
-			Organism* org = nullptr;
+            int s_size;
+            my_file.read((char*)&result, sizeof(int));
+            s_size = (int)result;
 
-			if (species == "D"){
-				Organism* org = new Dandelion(power, initiative, liveLength, powerToReproduce, pos, *this);
-			} else if (species == "G"){
-				Organism* org = new Grass(power, initiative, liveLength, powerToReproduce, pos, *this);
-			} else if (species == "S"){
-				Organism* org = new Sheep(power, initiative, liveLength, powerToReproduce, pos, *this);
-			} else if (species == "T"){
-				Organism* org = new Toadstool(power, initiative, liveLength, powerToReproduce, pos, *this);
-			} else if (species == "W"){
-				Organism* org = new Wolf(power, initiative, liveLength, powerToReproduce, pos, *this);
-			}
-			if (org != nullptr){
-				org->setSpecies(species); 
+            string species;
+            species.resize(s_size);
+            my_file.read((char*)&species[0], s_size);
+
+            Organism* org = nullptr; // Initialize org once
+
+            if (species == "D"){
+                org = new Dandelion(power, initiative, liveLength, powerToReproduce, pos, *this);
+            } else if (species == "G"){
+                org = new Grass(power, initiative, liveLength, powerToReproduce, pos, *this);
+            } else if (species == "S"){
+                org = new Sheep(power, initiative, liveLength, powerToReproduce, pos, *this);
+            } else if (species == "T"){
+                org = new Toadstool(power, initiative, liveLength, powerToReproduce, pos, *this);
+            } else if (species == "W"){
+                org = new Wolf(power, initiative, liveLength, powerToReproduce, pos, *this);
+            }
+
+            if (org != nullptr){
+                // You likely don't need to set the species here again if it's already handled by the constructor
+                // org->setSpecies(species);
                 new_organisms.push_back(org);
-			} else {
+            } else {
                 cerr << "Error: Unknown species type '" << species << "' found in save file." << endl;
             }
-		}
-		this->organisms = new_organisms;
-		my_file.close();
-	}
+        }
+        // It's good practice to clear existing organisms to avoid memory leaks
+        // if this->organisms already contains pointers to dynamically allocated objects
+        for (Organism* old_org : this->organisms) {
+            delete old_org;
+        }
+        this->organisms.clear();
+
+        this->organisms = new_organisms;
+        my_file.close();
+    }
 }
 
 string World::toString()

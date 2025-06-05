@@ -15,10 +15,7 @@ int Position::getX()
 
 void Position::setX(int x)
 {
-	if (x >= 0)
-		this->x = x;
-	else
-		this->x = 0;
+	this->x = x;
 }
 
 int Position::getY()
@@ -28,10 +25,7 @@ int Position::getY()
 
 void Position::setY(int y)
 {
-	if (y >= 0)
-		this->y = y;
-	else
-		this->y = 0;
+	this->y = y;
 }
 
 string Position::toString()

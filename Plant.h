@@ -8,5 +8,4 @@ class Plant : public Organism
 		Plant(World& world_ref);
 
 		vector<Result*> move();
-		vector<Result*> action();
 };

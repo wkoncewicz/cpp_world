@@ -14,6 +14,5 @@ class Animal : public Organism
 		Position getLastPosition();
 		void setLastPosition(Position lastPosition);
 		vector<Position> getVectorOfPositionsAround();
-		vector<Result*> action();
 		vector<Result*> move();
 };
